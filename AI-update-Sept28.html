@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>AI This Week · Sep 22–28, 2026</title>
+<style>
+  :root{
+    --paper:#F7F8FA;--card:#FFFFFF;
+    --ink:#15191F;--ink2:#4E5661;--ink3:#7B8490;
+    --rule:#D8DDE3;--rule2:#E8ECF0;
+    --blue:#2257D6;      /* model / primary   */
+    --teal:#2F7D78;      /* hardware / infra  */
+    --slate:#3D4650;     /* applications      */
+    --amber:#B6863B;     /* capital / cost    */
+    --burg:#9B4248;      /* risk / policy     */
+    --r:3px;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--paper);color:var(--ink);font-size:14.5px;line-height:1.72;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    font-family:Inter,"SF Pro Text",-apple-system,BlinkMacSystemFont,"Helvetica Neue","IBM Plex Sans",Arial,sans-serif;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 32px 84px}
+
+  /* masthead: sticky, so the collapse controls stay reachable on a long page */
+  .masthead{display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+    padding:16px 0 10px;border-bottom:1px solid var(--ink);
+    font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;font-weight:600;color:var(--ink3);
+    position:sticky;top:0;z-index:20;background:var(--paper)}
+  .masthead span{white-space:nowrap}
+  .masthead .mhr{display:flex;align-items:baseline;gap:12px}
+  .masthead .mhr>span{font-family:var(--mono);letter-spacing:.1em;font-weight:500}
+
+  /* collapse controls: small monospace squares, no icon font */
+  .ctl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    font-weight:500;color:var(--ink3);background:transparent;border:1px solid var(--rule);
+    border-radius:2px;padding:3px 8px;cursor:pointer;transition:.12s}
+  .ctl:hover{border-color:var(--ink3);color:var(--ink)}
+  /* per-entry toggle, right-aligned on the title row */
+  .body h2{display:flex;align-items:baseline;justify-content:space-between;gap:14px}
+  .body h2 .h2t{flex:1 1 auto;min-width:0;cursor:pointer}
+  .body h2 .h2t:hover{color:var(--accent)}
+  .tog{flex:0 0 auto;font-family:var(--mono);font-size:11px;line-height:1;color:var(--ink3);
+    background:transparent;border:1px solid var(--rule);border-radius:2px;width:18px;height:18px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.12s;padding:0}
+  .tog:hover{border-color:var(--ink3);color:var(--ink)}
+  /* collapsed: body hidden, title kept; rail becomes a single row, so the entry reads like an index line */
+  .entry.collapsed{padding-top:14px;padding-bottom:14px}
+  .entry.collapsed .body>*:not(h2){display:none}
+  .entry.collapsed .body h2{font-size:15px;font-weight:500;color:var(--ink2);margin-bottom:0}
+  .entry.collapsed .rail{flex-direction:row;align-items:center;flex-wrap:wrap;gap:9px}
+  .entry.collapsed .tog{border-color:var(--ink3);color:var(--ink)}
+
+  header{padding:42px 0 0}
+  h1{font-size:40px;line-height:1.18;font-weight:600;letter-spacing:-.028em;margin-top:16px}
+  h1 em{font-style:normal;font-size:.58em;font-weight:400;color:var(--ink3);letter-spacing:-.004em}
+  .sub{margin-top:16px;font-size:15px;line-height:1.74;color:var(--ink2)}
+  .meta{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:26px;padding-top:14px;
+    border-top:1px solid var(--rule);font-size:12px;color:var(--ink3);letter-spacing:.02em}
+  .meta i{font-style:normal;font-family:var(--mono);color:var(--ink2);font-weight:500;letter-spacing:.04em}
+  .langbar{display:flex;gap:6px;margin-top:22px}
+  .langbar a{font-size:12px;text-decoration:none;padding:5px 13px;border-radius:var(--r);
+    border:1px solid var(--rule);color:var(--ink2);transition:.12s}
+  .langbar a.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .langbar a:hover:not(.on){border-color:var(--ink3);color:var(--ink)}
+
+  /* takeaway: the one dark panel on the page */
+  .tldr{margin:38px 0 0;background:#11151B;color:#DCE1E7;border-left:2px solid var(--blue);
+    border-radius:var(--r);padding:24px 26px}
+  .tldr .lbl{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#7F8996;font-weight:700;margin-bottom:12px}
+  .tldr p{font-size:15px;line-height:1.8}
+  .tldr b{color:#fff;font-weight:600}
+
+  /* filters */
+  .filters{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:28px 0 0}
+  .filters .flabel{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+    color:var(--ink3);margin-right:6px}
+  .filters button{font:inherit;font-size:12.5px;padding:5px 12px;border-radius:var(--r);cursor:pointer;
+    border:1px solid var(--rule);background:transparent;color:var(--ink2);transition:.12s}
+  .filters button:hover{border-color:var(--ink3);color:var(--ink)}
+  .filters button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+
+  /* section rule */
+  .sec{display:flex;align-items:baseline;gap:14px;margin:54px 0 0;padding-bottom:11px;
+    border-bottom:1px solid var(--ink)}
+  .sec .k{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+  .sec .k em{font-style:normal;font-weight:500;color:var(--ink3);letter-spacing:.1em}
+  .sec .n{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink3);white-space:nowrap}
+
+  /* entries: metadata rail | reading column */
+  .entry{display:grid;grid-template-columns:168px minmax(0,1fr);gap:0 28px;
+    padding:22px 0 24px;border-bottom:1px solid var(--rule2);transition:background .15s ease}
+  .entry:hover{background:#EEF1F5}
+  .rail{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding-top:2px}
+  .idx{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.05em;color:var(--accent)}
+  .tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink3);
+    border:1px solid var(--rule);border-radius:2px;padding:1px 6px;transition:.15s}
+  .date{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.03em}
+  .entry:hover .tag{border-color:var(--ink3);color:var(--ink2)}
+  .body{min-width:0}
+  .body h2{font-size:18px;line-height:1.46;font-weight:600;letter-spacing:-.012em;margin-bottom:9px}
+  .body p{font-size:14.5px;line-height:1.76;color:var(--ink2);margin-bottom:8px}
+  .body p:last-of-type{margin-bottom:0}
+  .who{display:flex;flex-wrap:wrap;align-items:baseline;gap:9px;margin-bottom:7px;
+    font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.005em}
+  .who .handle{font-family:var(--mono);font-size:11.5px;font-weight:400;color:var(--ink3)}
+  .who .badge{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--ink3);
+    border:1px solid var(--rule);border-radius:2px;padding:1px 5px;white-space:nowrap}
+  .q{margin:0 0 11px;padding:8px 0 8px 15px;border-left:2px solid var(--accent);
+    font-size:14.5px;line-height:1.68;color:var(--ink);font-weight:500}
+  .why{margin-top:11px;padding-top:10px;border-top:1px dashed var(--rule);font-size:13.5px;color:var(--ink2)}
+  .why b{color:var(--accent);font-weight:600}
+
+  footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--ink);
+    font-size:11.5px;line-height:1.85;color:var(--ink3)}
+  footer a{color:var(--ink2);text-decoration:none;border-bottom:1px solid var(--rule)}
+  footer a:hover{border-color:var(--ink2)}
+
+  @media (max-width:760px){
+    .wrap{padding:0 20px 62px}
+    h1{font-size:30px}
+    h1 em{display:block;font-size:.62em;margin-top:8px}
+    header{padding:30px 0 0}
+    .entry{grid-template-columns:1fr;gap:9px;padding:20px 0}
+    .rail{flex-direction:row;align-items:center;flex-wrap:wrap;gap:9px}
+    .tldr{padding:22px 20px}
+    .sec{margin:42px 0 0}
+    .masthead{font-size:9.5px;letter-spacing:.1em}
+    .masthead .mhr{gap:8px}
+    .ctl{padding:2px 6px;font-size:9.5px}
+  }
+
+  @media print{
+    body{background:#fff}
+    .langbar,.filters,.ctl,.tog{display:none}
+    .entry,.tldr{break-inside:avoid}
+    .entry:hover{background:none}
+    .masthead{position:static}
+    .entry.collapsed .body>*:not(h2){display:block}
+    .entry.collapsed .body h2{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:9px}
+    .entry.collapsed .rail{flex-direction:column;align-items:flex-start}
+    .body h2 .h2t{flex:1 1 auto}
+  }
+</style></head><body>
+<div class="wrap">
+
+  <div class="masthead">
+    <span>AI Weekly Digest</span>
+    <span class="mhr">
+      <span>Sep 22–28</span>
+      <button class="ctl" type="button" id="collapseAll">Collapse all</button>
+      <button class="ctl" type="button" id="expandAll">Expand all</button>
+    </span>
+  </div>
+
+  <header>
+    <h1>AI This Week <em>· September 22–28, 2026</em></h1>
+    <p class="sub">Silicon Valley and the US lead; China is broken out at the end, focused on models and silicon.</p>
+    <div class="meta">
+      <span>Week <i>WK 39</i></span><span>Span <i>2026-09-22 – 2026-09-28</i></span>
+      <span>US <i>08</i></span><span>China <i>02</i></span>
+      <span>People <i>8</i></span><span>Channels <i>6</i></span>
+    </div>
+  </header>
+
+  <section class="tldr">
+    <div class="lbl">The one-line takeaway</div>
+    <p>The turn this week is not a smarter model but <b>who gets to let agents in once they reach the desktop</b>: Amazon blocking Meta's Muse on Sep 20, six banks warning two days later, and Nvidia turning agent safety into a product line by Sep 28 — three moves on one question.</p>
+  </section>
+
+  <div class="filters">
+    <span class="flabel">Filter</span>
+    <button class="on" data-f="all">All</button>
+    <button data-f="us">US</button>
+    <button data-f="cn">China</button>
+    <button data-f="kol">People</button>
+    <button data-f="chan">Channels</button>
+    <button data-f="hw">Hardware</button>
+    <button data-f="mdl">Models</button>
+    <button data-f="app">Apps</button>
+    <button data-f="cld">Cloud &amp; Capital</button>
+    <button data-f="pol">Policy</button>
+  </div>
+
+  <!--CONTENT-->
+  <div class="sec"><span class="k">Silicon Valley &amp; US <em>US</em></span><span class="n">01 – 08</span></div>
+
+  <article class="entry" data-cat="us" data-topic="mdl" style="--accent:var(--blue)">
+    <div class="rail"><div class="idx">01</div><div class="tag">Models</div><div class="date">Sep 22</div></div>
+    <div class="body">
+      <h2><span class="h2t">Two frontier labs ship half-price flagships 90 minutes apart</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>Anthropic's Claude Opus 5.5 lists at <b>$4 / $20</b> per million tokens, matching Fable 5.1 on most tasks per the company, at roughly 40% lower running cost than Opus 5 and with cache reads down 60%.</p>
+      <p>OpenAI answered the same day with GPT-6 Sol at $2 / $10 and Luna at $0.1 / $0.5, saying Sol makes about half as many factual mistakes as its predecessor on an internal evaluation.</p>
+      <div class="why"><b>Why it matters:</b> Frontier prices halved within weeks, driven by the open-weight cost floor rather than any safety pledge — ten days after its own slowdown essay, Anthropic's first release was a price cut.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="us" data-topic="app" style="--accent:var(--slate)">
+    <div class="rail"><div class="idx">02</div><div class="tag">Apps</div><div class="date">Sep 25</div></div>
+    <div class="body">
+      <h2><span class="h2t">Microsoft rebuilds Copilot as an "OS for work"</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>The rebuild splits into Home, Code and Autopilot. Word, Excel and PowerPoint move inside the Copilot surface, and Autopilot is a background agent that keeps working after the user leaves.</p>
+      <p>Day-to-day use stays inside the seat licence; agentic processing such as Cowork and Code moves to usage-based Copilot Credits. Microsoft had over 30m paid Copilot seats in July — about 7% of its 450m commercial Microsoft 365 seats.</p>
+      <p>The stock rose 3.66% that day, adding roughly $135bn in market value.</p>
+      <div class="why"><b>Why it matters:</b> The pricing matters more than the features: a usage layer on top of seat licences concedes that agent marginal cost does not fit a flat subscription.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="us" data-topic="app" style="--accent:var(--slate)">
+    <div class="rail"><div class="idx">03</div><div class="tag">Apps</div><div class="date">Sep 22</div></div>
+    <div class="body">
+      <h2><span class="h2t">Amazon blocks Meta's Muse; six banks warn two days later</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>On Sep 22 six banks — Bank of America, Capital One, NatWest, ING, Commonwealth Bank of Australia and ASB — published "Building Trust in Agentic Commerce", warning that agentic checkout raises fraud, privacy and liability problems, and setting out five principles: transparency, safety, privacy and data, choice, and interoperability.</p>
+      <p>Amazon had begun blocking Muse from shopping on its site on the night of Sep 20, on three grounds: no authorisation, the agent not identifying itself as AI, and the alleged capture and storage of account credentials.</p>
+      <p>Muse hit about 1.8m iOS downloads and 642,000 daily actives in the US and Canada in its first 12 days, both ahead of ChatGPT's comparable window; Meta shares rose more than 20% in two weeks, adding over $200bn. Amazon is roughly 37-40% of US e-commerce. A researcher also disclosed a Muse Mac client flaw hijackable with a single command, which Meta patched by Sep 22.</p>
+      <div class="why"><b>Why it matters:</b> The first real gate on agent commerce is not model capability but platform admission: identity disclosure, third-party credential custody and observable behaviour. Miss one and the door stays shut.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="us" data-topic="cld" style="--accent:var(--amber)">
+    <div class="rail"><div class="idx">04</div><div class="tag">Cloud &amp; Capital</div><div class="date">Sep 28</div></div>
+    <div class="body">
+      <h2><span class="h2t">Nvidia adds a $150bn buyback and turns agent safety into a product line</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>The board authorised a <b>$150bn</b> increase, taking the remaining programme to $235bn — the largest single increase on record — to be executed through fiscal 2028.</p>
+      <p>The same day it launched its Open Agent Safety Platform: OpenShell traces agent actions and enforces policy on Vera CPUs, while Sentry on BlueField-4 quarantines offending agents in milliseconds. Anthropic, Salesforce, SAP, Microsoft and 100+ others are on board.</p>
+      <div class="why"><b>Why it matters:</b> A month after paying about $13bn for Hugging Face to own the distribution layer, Nvidia now wants the trust layer — turning a regulatory argument into a SKU.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="us" data-topic="pol" style="--accent:var(--burg)">
+    <div class="rail"><div class="idx">05</div><div class="tag">Policy</div><div class="date">Sep 25</div></div>
+    <div class="body">
+      <h2><span class="h2t">Appeals court backs the Pentagon: Claude stays out of DoD work</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>On Sep 25 the D.C. Circuit ruled in Anthropic v. Department of War, leaving in place the treatment of Claude as a supply-chain risk. The case is being heard as federal administrative law rather than a contract dispute.</p>
+      <p>More than 15 amicus briefs backed the petitioner, including 149 former judges, the ACLU and former Defense Secretary Leon Panetta. The dispute traces to Anthropic's refusal to allow Claude for mass surveillance or fully autonomous weapons.</p>
+      <p>An earlier piece of the same accountability line: on Sep 21, before this window, British Columbia sued OpenAI and Sam Altman in California federal court, alleging a failure to report risk before a February 2026 school shooting — the first judicial test of a management-responsibility doctrine.</p>
+      <div class="why"><b>Why it matters:</b> A year ago these disagreements lived in contract terms; now they are public court records — a model's usage policy is being litigated as administrative law.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="us" data-topic="mdl" style="--accent:var(--blue)">
+    <div class="rail"><div class="idx">06</div><div class="tag">Models</div><div class="date">Sep 23</div></div>
+    <div class="body">
+      <h2><span class="h2t">Anthropic opens a Bay Area wet lab: 950 Claude agents surface a CRISPR-like enzyme system</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>The only instruction was to find interesting reverse transcriptases in DNA databases. About 950 agents ran for 21 hours and spent 210m tokens, narrowing 200,000-plus candidates to 20, each with a human-readable report.</p>
+      <p>One agent spotted an evenly spaced tandem-repeat array next to a phage sequence; the team named it ART. The preprint reports 3–21 short repeat copies that express as a set of short RNAs.</p>
+      <p>In parallel, Stanford's virtual biotech ran 37,000 agents to analyse about 50,000 clinical trials in under a week. Its proposed B7-H3 lung-cancer ADC was reached independently by a drugmaker months later and won FDA Breakthrough Therapy designation.</p>
+      <div class="why"><b>Why it matters:</b> The bottleneck moved: hypothesis generation is collapsing in cost, validation is not — ART's function is unproven and every wet-lab step was done by humans.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="us" data-topic="cld" style="--accent:var(--amber)">
+    <div class="rail"><div class="idx">07</div><div class="tag">Cloud &amp; Capital</div><div class="date">Sep 24</div></div>
+    <div class="body">
+      <h2><span class="h2t">Two infrastructure megadeals in one week: Akamai's $11.6bn CPU contract, Nscale's $3.36bn convertible</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>On Sep 24 Akamai signed a seven-year, <b>$11.6bn</b> cloud contract with Anthropic — the largest in its history — expandable by $9bn to about $20bn. Akamai expects roughly $5.5bn of capex plus about $1.7bn more in 2026 to pre-purchase components including memory; revenue starts in the second half of 2027 and reaches roughly a $1.7bn annual run rate by the end of 2028.</p>
+      <p>What the contract buys is <b>CPUs</b>, not GPUs: the layer where agents call tools, open browsers and run code sits on general-purpose compute, and one task can mean a hundred such steps. In exchange Akamai issued Anthropic a warrant for up to about 5% of its common stock at $111.33 a share, vesting roughly 1% per additional $3bn committed. Akamai shares rose more than 17% after hours.</p>
+      <p>A day later UK AI cloud provider Nscale closed <b>$3.36bn</b> in convertible loan notes led by Third Point: a $2.36bn first tranche at closing plus a $1bn commitment from Nvidia expected in mid-November, converting automatically on completion of its IPO (into non-voting shares for Nvidia). It self-reports over $103bn in contracted value and filed its S-1 on Sep 18.</p>
+      <div class="why"><b>Why it matters:</b> Both are priced on commitments rather than revenue, and both land as compute demand shifts from training toward the agent execution layer: one is a seven-year CPU contract, the other a bridge to an IPO.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="us" data-topic="app" style="--accent:var(--slate)">
+    <div class="rail"><div class="idx">08</div><div class="tag">Apps</div><div class="date">Sep 22</div></div>
+    <div class="body">
+      <h2><span class="h2t">The people who supply data to agents are raising on their own</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>Firecrawl raised a $75m Series B led by Smash Capital and launched Alexandria, one interface for agents to pull from the live web and official data providers. It claims 1.5m developers and 21% better answer quality than built-in web tools across 845 blind-judged tasks.</p>
+      <p>OpenRouter is joining Stripe, and its founder used a podcast this week to name token fraud — and autonomous agents attacking token flows — as the next security problem. The platform self-reports over 10tn tokens a day.</p>
+      <div class="why"><b>Why it matters:</b> The moat is shifting away from model weights toward who owns trusted data sources and who owns the settlement rails.</div>
+    </div>
+  </article>
+
+  <div class="sec"><span class="k">China <em>CN</em></span><span class="n">09 – 10</span></div>
+
+  <article class="entry" data-cat="cn" data-topic="hw" style="--accent:var(--teal)">
+    <div class="rail"><div class="idx">09</div><div class="tag">Hardware</div><div class="date">Sep 22</div></div>
+    <div class="body">
+      <h2><span class="h2t">Alibaba's T-Head unveils Zhenwu V900: 3x per-chip compute, 500,000-card clusters</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>Zhenwu V900 delivers 3x the per-chip compute of the previous M890, with 216GB of memory and 1,200GB/s die-to-die bandwidth, native FP8 / FP4 support and volume production in <b>Q1 2027</b> — two quarters ahead of plan.</p>
+      <p>A self-designed ICN Switch stitches thousands of chips together, with a single-cluster ceiling of 500,000 cards. Alibaba also laid out a Qwen4 roadmap pushing toward 5–10tn parameters.</p>
+      <p>Alibaba Cloud targets more than 20GW of operated data-centre capacity by 2032. No absolute FLOPs figure was published and the 3x is a vendor claim; Alibaba's Hong Kong shares rose as much as 5% that day.</p>
+      <div class="why"><b>Why it matters:</b> The domestic benchmark shifted from per-chip peak to system-level capacity: Huawei bets on superpods, Alibaba on giant clusters. Neither ceiling has been proven.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="cn" data-topic="mdl" style="--accent:var(--blue)">
+    <div class="rail"><div class="idx">10</div><div class="tag">Models</div><div class="date">Sep 22</div></div>
+    <div class="body">
+      <h2><span class="h2t">Xiaomi's open-sourced MiMo-V2.6 tops the open-weight table; Chinese models take four of the top five by usage</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>Xiaomi open-sourced the MiMo-V2.6 family: the 1.02tn-parameter V2.6-Pro scores <b>46</b> on the Artificial Analysis Intelligence Index, ahead of Kimi K3's 44 and level with Grok 4.7; the Flash tier sits at 37.9.</p>
+      <p>StepFun's Step 5 Preview shipped alongside: a 600B sparse MoE with 27B active parameters and a 1M-token context, with weights promised for October 15.</p>
+      <p>Also in the comparison set is StepFun's Step 5 Preview, released Sep 20: a 600B-parameter sparse MoE with 27B active and a 1M-token context, which the company says costs about one-eighth of Opus 5 per task, with weights promised for October 15.</p>
+      <div class="why"><b>Why it matters:</b> Open weights have turned price into China's main battleground — and that share number is precisely why two US labs shipped half-price models this week.</div>
+    </div>
+  </article>
+
+  <div class="sec"><span class="k">People <em>people</em></span><span class="n">P1 – P8</span></div>
+
+  <article class="entry" data-cat="voice" data-src="kol" data-topic="pol" style="--accent:var(--burg)">
+    <div class="rail"><div class="idx">P1</div><div class="tag">INTERVIEW</div><div class="date">Sep 27</div></div>
+    <div class="body">
+      <div class="who">Bill Gates <span class="handle">Microsoft co-founder</span><span class="badge">Now pro-regulation</span></div>
+      <h2><span class="h2t">"Self-regulation isn't enough — that has to be a requirement"</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <blockquote class="q">"AI is certainly powerful enough to drive events that cause a billion deaths. You need law enforcement and the politicians to get into the discussion about what safeguards and monitoring look like. And that has to be a required thing."</blockquote>
+      <p>On NBC's Meet the Press on Sep 27 he accepted the scale of the risk and pointed to legislation: industry self-regulation is not enough, and the rules need law enforcement and politicians in the room and have to be mandatory.</p>
+      <p>The backdrop is his August essay: AI could go either way, the fairest tool in history or a source of vast social inequity. He proposed a tax on the volume of text models process and support for displaced workers, and wrote that if someone had a credible plan for slowing AI globally he would likely support it.</p>
+      <p>On the other end of the same argument sit Jensen Huang, Mark Zuckerberg and Satya Nadella, who each argue no new rules are needed and that companies should simply stop when they find a problem.</p>
+      <div class="why"><b>Why it matters:</b> This week the case for mandatory rules widened from the labs to an industry elder, while the White House default remains existing law: on one question, the best-known optimist and the best-known opponent now land on opposite answers.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="kol" data-topic="pol" style="--accent:var(--burg)">
+    <div class="rail"><div class="idx">P2</div><div class="tag">SPEECH</div><div class="date">Sep 24</div></div>
+    <div class="body">
+      <div class="who">Sam Altman <span class="handle">OpenAI CEO</span><span class="badge">Endorser</span></div>
+      <h2><span class="h2t">"We could lose control of the future"</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <blockquote class="q">"It moves so fast that people can no longer follow what's happening, or intervene when needed. Whether you put the odds of catastrophe at 10%, 1% or 0.1%, none of these levels is remotely acceptable."</blockquote>
+      <p>In a Sep 24 speech in Washington he split the risk in two: speed outrunning institutions, and power concentrating in too few hands.</p>
+      <p>He confirmed OpenAI will not IPO in 2026 and left the Sep 29 DevDay to developers; Fortune reports a cybersecurity model, GPT-6 Cyber, plus a deployment product will be previewed there (press-reported, not yet announced).</p>
+      <div class="why"><b>Why it matters:</b> He called for coordinated governance and cut prices within 90 minutes of Anthropic. Endorsement and competition are not in tension; they run at once.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="kol" data-topic="pol" style="--accent:var(--burg)">
+    <div class="rail"><div class="idx">P3</div><div class="tag">PODCAST · TV</div><div class="date">Sep 23</div></div>
+    <div class="body">
+      <div class="who">Jensen Huang <span class="handle">Nvidia CEO</span><span class="badge">Opponent</span></div>
+      <h2><span class="h2t">"I love Hinton, but I hate his prediction"</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <blockquote class="q">"Words from a scientist are not automatically science. These predictions are harmful and irresponsible to state casually. Don't assume alarmism benefits society."</blockquote>
+      <p>In a long Sep 23 interview on The Ezra Klein Show he offered a ratio: about 20% of Nvidia's work goes to design and 80% to verification, while the companies most worried about losing control spend the most on making AI stronger.</p>
+      <p>Asked what happens if alignment fails, he said: don't ship it, and if a lab cannot be controlled it must be shut. On Sep 28 he told CNBC that distillation "is called competition", colliding with Treasury Secretary Scott Bessent's label of theft.</p>
+      <div class="why"><b>Why it matters:</b> He reframed safety as an engineering problem and shipped the engineering answer the same day — position and product delivered together.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="kol" data-topic="pol" style="--accent:var(--burg)">
+    <div class="rail"><div class="idx">P4</div><div class="tag">X</div><div class="date">Sep 24</div></div>
+    <div class="body">
+      <div class="who">David Sacks <span class="handle">White House AI lead</span><span class="badge">White House line</span></div>
+      <h2><span class="h2t">"A pause would wreck the U.S. economy — but it's the Trump economy"</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <blockquote class="q">"When Democrats advocate for a Pause or Moratorium, they know that would wreck the U.S. economy. But since it's the Trump economy, they're fine with that."</blockquote>
+      <p>On Sep 24 he quote-posted a Wall Street Journal report calling the US AI build-out the largest in history, recasting the pause camp as partisan calculation rather than safety, and the same day amplified Zuckerberg's argument that each lab should police its own pace instead of coordinating industry-wide.</p>
+      <p>In an earlier Sep 13 long post he denied the proposal's premises one by one: by market share, revenue growth and capability, Anthropic and OpenAI are already a duopoly, and slowing down needs no one's permission. He also questioned METR's independence, citing its entanglement with Anthropic's investors and staff.</p>
+      <div class="why"><b>Why it matters:</b> His statements move the odds on new federal rules, so read this as a policy signal rather than commentary: the White House default is existing law, not a new agency.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="kol" data-topic="mdl" style="--accent:var(--blue)">
+    <div class="rail"><div class="idx">P5</div><div class="tag">COMMENT</div><div class="date">Sep 23</div></div>
+    <div class="body">
+      <div class="who">Feng Zhang <span class="handle">MIT / Broad Institute</span><span class="badge">Outside review</span></div>
+      <h2><span class="h2t">"Merits further investigation" — not the next CRISPR</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <blockquote class="q">"This is an exciting example of how AI agents can contribute to biological discovery. The identification of RNA-repeat arrays associated with reverse transcriptases is genuinely intriguing and merits further investigation."</blockquote>
+      <p>After Anthropic published ART on Sep 23, the reviewer of the preprint gave that assessment — he did not say it edits genes, cuts DNA, or becomes the next editing tool, only that he hoped the work encourages more scientists to explore how AI can support research.</p>
+      <p>The market went further: on Sep 23 gene-editing stocks split and fell — CRISPR Therapeutics closed about 6% lower at $59.03, Beam about 6%, Prime Medicine about 12% after a 10% bounce, while Editas opened 7% up and closed 8% down. The retail read: possibly more effective than existing tools, but a working therapy is years away.</p>
+      <div class="why"><b>Why it matters:</b> The endorsement stops at "merits further investigation" while pricing already ran a full cycle on "the next CRISPR". The gap is the distance between this week's biology narrative and its bench.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="kol" data-topic="app" style="--accent:var(--slate)">
+    <div class="rail"><div class="idx">P6</div><div class="tag">X</div><div class="date">Sep 22</div></div>
+    <div class="body">
+      <div class="who">Andrej Karpathy <span class="handle">Anthropic · Eureka Labs</span><span class="badge">Framing</span></div>
+      <h2><span class="h2t">He gave Jev a coordinate: the tier nobody invested in</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <blockquote class="q">"I see it as a point on the LLM Pareto-optimal curve in a regime that had a large revealed latent demand (no thinking, single token, low latency, acceptable intelligence) that was under-invested into because of a race to higher intelligence."</blockquote>
+      <p>Early on Sep 22 he replied to Will Depue about TypeSafe AI's Jev, a "System One" model that returns calibrated probabilistic decisions instead of free-form text.</p>
+      <p>By published figures, Jev reaches a median AUROC of 0.886 on zero-shot alignment-failure detection at $0.042 per million input tokens — roughly 1/63 the cost of a conventional LLM judge.</p>
+      <div class="why"><b>Why it matters:</b> He translated Jev from a product launch into a neglected segment of a curve — the shortest route to judging which of this wave stays and which is just heat.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="kol" data-topic="app" style="--accent:var(--slate)">
+    <div class="rail"><div class="idx">P7</div><div class="tag">ESSAY</div><div class="date">Sep 24</div></div>
+    <div class="body">
+      <div class="who">Simon Willison <span class="handle">simonwillison.net</span><span class="badge">Engineer's take</span></div>
+      <h2><span class="h2t">"Coding agents make software engineering even harder"</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <blockquote class="q">"The more time I spend working with coding agents, the more convinced I am that they make software engineering even harder."</blockquote>
+      <p>The Sep 24 short post argues effective agent use demands deeper technical judgement: heavier AI assistance raises the skill bar rather than lowering it.</p>
+      <p>Paired with that judgement is a shift in cost accounting: agents are being billed by task and by usage, so teams must now decide for themselves which steps are worth the tokens.</p>
+      <div class="why"><b>Why it matters:</b> It runs directly against the "anyone can code now" pitch, and that reversal is the key variable in judging real enterprise agent ROI.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="kol" data-topic="app" style="--accent:var(--slate)">
+    <div class="rail"><div class="idx">P8</div><div class="tag">TV · SUMMIT</div><div class="date">Sep 23</div></div>
+    <div class="body">
+      <div class="who">Mark Zuckerberg <span class="handle">Meta founder</span><span class="badge">Product view</span></div>
+      <h2><span class="h2t">"Muse will be a personalised superintelligence for billions"</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <blockquote class="q">"Muse will become a personalised superintelligence for billions of people, helping them achieve their goals and improve their lives."</blockquote>
+      <p>At Connect 2026 on Sep 23–24 he called Muse the core of Meta's AI vision and said it would extend into Ray-Ban Meta glasses, the key-fob-sized Charm device and Quest. Charm carries 5G and a fingerprint sensor and ships before the December holidays.</p>
+      <p>The same week Amazon shut his agent out of its store, and Meta and Shopify wired up agentic checkout through Shop Pay on Sep 22 as the alternative.</p>
+      <div class="why"><b>Why it matters:</b> He took the opposite path to Microsoft's: no permission governance, connectors handed straight to the user. That is why the fight arrives as a platform dispute rather than a compliance debate.</div>
+    </div>
+  </article>
+
+  <div class="sec"><span class="k">Channels <em>channels</em></span><span class="n">C1 – C6</span></div>
+
+  <article class="entry" data-cat="voice" data-src="chan" data-topic="cld" style="--accent:var(--amber)">
+    <div class="rail"><div class="idx">C1</div><div class="tag">PODCAST</div><div class="date">Sep 25</div></div>
+    <div class="body">
+      <div class="who">Latent Space <span class="handle">swyx + Alessio</span><span class="badge">Distribution · settlement</span></div>
+      <h2><span class="h2t">OpenRouter: from seed to Stripe — the routing layer becomes the settlement layer</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>The Sep 25 episode brings on OpenRouter co-founder Alex Atallah and AMP's Anjney Midha: why labs can spend billions on a checkpoint and still fail at distribution, how the platform reached over 10tn tokens a day, and why it deliberately avoided fine-tuning and memory.</p>
+      <p>The most useful stretch is security: why Stripe's fraud infrastructure is strategic for a routing layer, and why the next wave of fraud comes from autonomous agents attacking increasingly valuable token flows.</p>
+      <div class="why"><b>Why it matters:</b> Consolidation at the distribution layer says AI's margin is moving from training toward routing and settlement — and the labs own neither.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="chan" data-topic="pol" style="--accent:var(--burg)">
+    <div class="rail"><div class="idx">C2</div><div class="tag">ESSAY</div><div class="date">Sep 22</div></div>
+    <div class="body">
+      <div class="who">Stratechery <span class="handle">Ben Thompson</span><span class="badge">Two updates</span></div>
+      <h2><span class="h2t">"Aggregator v Aggregator": Amazon's moat lives in the physical world</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>In his Sep 22 update he pushed the block to its conclusion: Muse is more useful if it can use Amazon, which is exactly Amazon's problem because Muse does not see ads. Amazon's differentiation is rooted in the physical world — the certainty of delivery and returns — so it can afford to block. Meta needs Walmart to route around that moat.</p>
+      <p>In a companion interview the same week his second-order point is more counter-intuitive: personal agents should sell pain relief, not productivity. People enjoy shopping — browsing, comparing and filling a cart is entertainment, not waste — and the tasks worth delegating are annoyances like cancellations and returns, which create new support costs on the business side.</p>
+      <div class="why"><b>Why it matters:</b> It recasts "can agents get in" from a compliance question into a business-model one: whoever owns both fulfilment and advertising has a reason to shut the door — which is why platform blocks, not regulation, arrived first.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="chan" data-topic="pol" style="--accent:var(--burg)">
+    <div class="rail"><div class="idx">C3</div><div class="tag">PODCAST</div><div class="date">Sep 23</div></div>
+    <div class="body">
+      <div class="who">Latent Space <span class="handle">swyx + Alessio</span><span class="badge">Biosecurity</span></div>
+      <h2><span class="h2t">Biosecurity is an arms race: the same models cut both ways</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>The Sep 23 episode brings on Radical Numerics' Eric Nguyen: after the OpenAI breach of Hugging Face, the real question is what else to worry about — Anthropic's filters single out cyber and bio risk, and defensive capability in both sits largely outside the open ecosystem.</p>
+      <p>The episode's argument: the same models that raise biological capability can also hold the defensive line, so defensive capability has to be open and has to keep pace with the frontier — otherwise one set of models widens both sides at once.</p>
+      <div class="why"><b>Why it matters:</b> In a week of arguments about slowing down, this offers a different answer: safety capability has to be built alongside capability, not await a slowdown.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="chan" data-topic="mdl" style="--accent:var(--blue)">
+    <div class="rail"><div class="idx">C4</div><div class="tag">VIDEO</div><div class="date">Sep 24</div></div>
+    <div class="body">
+      <div class="who">AI Explained <span class="handle">YouTube</span><span class="badge">Task-level</span></div>
+      <h2><span class="h2t">"Opus 5.5: how close are we to automated AI research?"</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>The Sep 24 episode separates the two things most easily confused in a launch week — higher benchmark scores versus better capability on specific tasks — checking which steps are genuinely automatable and which still need a human to pose the problem.</p>
+      <div class="why"><b>Why it matters:</b> In a week when everyone argued about whether self-improvement has already begun, breaking capability down to task granularity is the most effective cool-down.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="chan" data-topic="app" style="--accent:var(--slate)">
+    <div class="rail"><div class="idx">C5</div><div class="tag">VIDEO</div><div class="date">Sep 26</div></div>
+    <div class="body">
+      <div class="who">Fireship <span class="handle">YouTube</span><span class="badge">Recap</span></div>
+      <h2><span class="h2t">"Meta is pivoting again": what you missed from Connect 2026</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>The Sep 26 rapid-cut compresses all of Connect 2026 into a few minutes, landing on Muse's device matrix and Meta's turn from social network to agent interface.</p>
+      <div class="why"><b>Why it matters:</b> Watching it in the same week Muse was blocked from Amazon makes it clearer that Meta is betting on the interface, not the model.</div>
+    </div>
+  </article>
+
+  <article class="entry" data-cat="voice" data-src="chan" data-topic="pol" style="--accent:var(--burg)">
+    <div class="rail"><div class="idx">C6</div><div class="tag">VIDEO</div><div class="date">Sep 25</div></div>
+    <div class="body">
+      <div class="who">Wes Roth <span class="handle">YouTube</span><span class="badge">Teardown</span></div>
+      <h2><span class="h2t">"THE END IS NEAR... and more AI doom"</span><button type="button" class="tog" aria-expanded="true" title="Collapse this entry" aria-label="Collapse this entry">−</button></h2>
+      <p>The Sep 25 roundup covers three things: the OpenAI agent breaching an Australian government system, TypeSafe's Jev launch, and the political fight over AI risk.</p>
+      <div class="why"><b>Why it matters:</b> This channel often covers first-hand reproduction details the mainstream press skips, and this week it lands on the exact path of a security incident.</div>
+    </div>
+  </article>
+
+  <!--/CONTENT-->
+
+  <footer>
+    <p>Compiled from public reporting and primary sources. Some figures are vendor-reported or press-reported and have not been independently verified. For information only; not investment advice.</p>
+    <p style="margin-top:10px;">Generated 2026-09-28</p>
+  </footer>
+
+</div>
+
+<script>
+  const btns=document.querySelectorAll('.filters button'),
+        cards=document.querySelectorAll('.entry'),
+        secs=document.querySelectorAll('.sec');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    const f=b.dataset.f;
+    cards.forEach(c=>{
+      c.style.display=(f==='all'||c.dataset.cat===f||c.dataset.src===f||c.dataset.topic===f)?'':'none';
+    });
+    secs.forEach(s=>{s.style.display=(f==='all')?'':'none';});
+  }));
+</script>
+
+<script>
+  /* collapse / expand: the title is always kept, only the body is hidden. Per-entry toggle sits on the title row; collapse-all / expand-all sit in the masthead */
+  (function(){
+    var ZH=document.documentElement.lang.toLowerCase().indexOf('zh')===0,
+        TXT=ZH?{c:'\u6536\u8d77\u8fd9\u4e00\u6761',e:'\u5c55\u5f00\u8fd9\u4e00\u6761'}
+               :{c:'Collapse this entry',e:'Expand this entry'};
+    var entries=Array.prototype.slice.call(document.querySelectorAll('.entry'));
+    function set(e,collapsed){
+      e.classList.toggle('collapsed',collapsed);
+      var b=e.querySelector('.tog');
+      if(b){
+        b.textContent=collapsed?'+':'\u2212';
+        b.setAttribute('aria-expanded',collapsed?'false':'true');
+        b.title=collapsed?TXT.e:TXT.c;
+        b.setAttribute('aria-label',collapsed?TXT.e:TXT.c);
+      }
+    }
+    entries.forEach(function(e){
+      var h=e.querySelector('.body h2');
+      if(!h) return;
+      var t=document.createElement('span');
+      t.className='h2t';
+      while(h.firstChild) t.appendChild(h.firstChild);
+      var b=document.createElement('button');
+      b.type='button';
+      b.className='tog';
+      b.textContent='\u2212';
+      b.setAttribute('aria-expanded','true');
+      b.title=TXT.c;
+      b.setAttribute('aria-label',TXT.c);
+      h.appendChild(t);
+      h.appendChild(b);
+      t.addEventListener('click',function(){set(e,!e.classList.contains('collapsed'));});
+      b.addEventListener('click',function(){set(e,!e.classList.contains('collapsed'));});
+    });
+    var ca=document.getElementById('collapseAll'), ea=document.getElementById('expandAll');
+    if(ca) ca.addEventListener('click',function(){entries.forEach(function(e){set(e,true);});});
+    if(ea) ea.addEventListener('click',function(){entries.forEach(function(e){set(e,false);});});
+  })();
+</script>
+
+
+
+</body></html>
